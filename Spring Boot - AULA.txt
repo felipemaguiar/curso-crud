@@ -1,0 +1,147 @@
+Spring Boot - AULA
+*****************************
+@SpringBootApplication  -> Inicia a aplicação web rodando o springboot - Faz todas a leituras de todos os projetos
+
+******************************
+@RestController -> Roda toda a requisição feita, ou seja, intercepta toda a requisição, o que vem de uma uma página ou algo assim;
+
+******************************
+CRIAR UM MÉTODO - MAPEAMENTO
+Método que retorna um string
+
+@RequestMapping(value = "/olamundo/{nome}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public String metodoRetorno(@PathVariable String nome) {
+    	return "Olá mundo " + nome;
+    }
+
+
+******************************
+BANCO DE DADOS
+No application.properties é feita toda a aplicação do banco de dados
+
+devemos adicionar no pom.xml a dependencia do banco de dados, neste caso o postgresql
+
+digitamos no google: maven postgresql
+copia e cola as dependencias dentro do dependencies
+
+Agora devemos criar nosso banco de dados
+no programa PgAdmin
+Em Databases - botão direito - create databases - Nome: spring-boot-serie
+
+Agora conectar nossa aplicação com este banco de dados
+em application.properties
+
+#Spring Boot server configuration
+spring.datasource.url = jdbc:postgresql://localhost:5432/spring-boot-serie
+spring.datasource.username = postgres
+spring.datasource.password = admin
+spring.jpa.hibernate.ddl-auto = update
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
+
+Agora criar um usuario no banco de dados
+@Entity
+@SequenceGenerator(name = "seq_usuario", sequenceName = "seq_usuario", allocationSize =  1, initialValue = 1) 
+public class Usuario implements Serializable{
+
+
+	private static final long serialVersionUID = 1L;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_usuario")
+	private Long id;
+	private String nome;
+	private int idade;
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getNome() {
+		return nome;
+	}
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+	public int getIdade() {
+		return idade;
+	}
+	public void setIdade(int idade) {
+		this.idade = idade;
+	}
+
+
+
+*********************************
+REPOSITÓRIO
+
+Faz as operações com o banco de dados
+Criamos um novo pacote com nome repository - criamos uma interface - nome: UsuarioRepository
+
+@Repository
+public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
+}
+
+Agora no controller devemos declarar o UsuarioRepository
+
+***************************
+API 
+Retorna um objeto JSON
+
+Construir um metodo que retorna o JSON
+
+ /* Primeiro método de API*/
+    @GetMapping(value = "listatodos") // quase igual ao @RequestMapping
+    @ResponseBody // Retorna os dados para o corpo da resposta
+    public ResponseEntity<List<Usuario>> listaUsuario(){ // retornamos uma lista de usuários
+    	
+    	List<Usuario> usuarios = usuarioRepository.findAll(); // Execulta a consulta no banco de dados
+    	
+    	return new ResponseEntity<List<Usuario>>(usuarios, HttpStatus.OK); // Retorna a lista em JSON
+    }
+
+
+***********************
+POSTMAN 
+Faz os testes de requisições (CRUD)
+
+
+***************************
+CONTEXTO
+Devemos colocar o contexto da nossa aplicação, para que não fique igual nos outros banco de dados
+
+ir em application.properties e adicionar
+server.servlet.context-path=/aula-crud
+modo genérico: server.servlet.context-path=/nome do banco de dados
+
+OBS: No postman tem que colocar o contexto para funcionar
+
+*************************
+LAYOUT
+VAMOS FAZER A NOSSA TELA
+
+Criar dentro do resources um Folder com o nome static
+Dentro do static - criar um arquivo HTML com o nome de index.html
+
+
+Entrar no Bootstrap
+https://getbootstrap.com/docs/5.0/getting-started/introduction/
+
+
+digitar no google jquery cdn 
+copiar o link minified e
+acima do boot strap colamos o link - no programa index
+
+
+***********************
+AJAX
+Fazer o javascript mandar uma requisição para o servidor que irá cair na nossa API que é o GreetingsController
+
+Todo lugar que for fazer um ajax é um padrão - ENTÃO o esquema é copiar e colar
+
+
+
+
+
+
